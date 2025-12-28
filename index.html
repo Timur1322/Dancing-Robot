@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Cute Robot Dance</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #10131a;
+      --robot-body: #7bd0ff;
+      --robot-face: #e9f7ff;
+      --robot-eye: #061b2b;
+      --accent: #ff9bd6;
+      --shadow: rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(1200px circle at 50% 30%, #172033, var(--bg));
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      color: #cfe7ff;
+    }
+
+    .stage {
+      width: 280px;
+      height: 320px;
+      position: relative;
+      filter: drop-shadow(0 10px 24px var(--shadow));
+      cursor: pointer;
+      transition: transform 250ms ease;
+    }
+
+    .stage:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Base robot styles */
+    .robot {
+      width: 100%;
+      height: 100%;
+    }
+
+    .robot svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Idle breathing */
+    .robot .torso,
+    .robot .head {
+      transform-origin: 50% 50%;
+      animation: breathe 3.6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    /* Eyes blink (idle) */
+    .robot .eye {
+      transform-origin: 50% 50%;
+      animation: blink 4.5s ease-in-out infinite;
+    }
+    /* .container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ball {
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background-color: blue;
+  position: absolute;
+  animation: bounce 1s infinite alternate;
+} */
+
+@keyframes bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100px);
+  }
+}
+    @keyframes blink {
+
+      0%,
+      97%,
+      100% {
+        transform: scaleY(1);
+      }
+
+      98% {
+        transform: scaleY(0.15);
+      }
+
+      99% {
+        transform: scaleY(1);
+      }
+    }
+
+    /* Dance state toggled by JS */
+    .stage.dance .robot {
+      animation: bob 0.75s ease-in-out infinite;
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-6px) rotate(-1deg);
+      }
+    }
+
+    .stage.dance .arm-left,
+    .stage.dance .arm-right {
+      transform-origin: 50% 0%;
+      animation: wave 0.6s linear infinite;
+      /* rotate: 45deg; */
+    }
+
+    .stage.dance .arm-right {
+      animation-delay: 0.3s;
+    }
+
+
+    .arm-left,
+.arm-right {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+
+.stage.dance .arm-left,
+.stage.dance .arm-right {
+  animation: wave 0.6s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  50%      { transform: rotate(25deg); }
+}
+
+    .stage.dance .antenna {
+      transform-origin: 50% 100%;
+      animation: wiggle 0.5s ease-in-out infinite;
+    }
+
+    @keyframes wiggle {
+
+      0%,
+      100% {
+        transform: rotate(0deg);
+      }
+
+      50% {
+        transform: rotate(-12deg);
+      }
+    }
+
+    .stage.dance .leg-left,
+    .stage.dance .leg-right {
+      transform-origin: 50% 0%;
+      animation: step 0.5s ease-in-out infinite;
+    }
+
+    .stage.dance .leg-right {
+      animation-delay: 0.25s;
+    }
+
+    @keyframes step {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-4px);
+      }
+    }
+
+    /* Floor glow */
+    .floor {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 22px;
+      background: radial-gradient(120px 12px at 50% 50%, rgba(123, 208, 255, 0.35), transparent 70%);
+      filter: blur(2px);
+    }
+
+    .stage.dance .floor {
+      background: radial-gradient(120px 12px at 50% 50%, rgba(255, 155, 214, 0.5), transparent 70%);
+    }
+
+    /* Cute hover hint */
+    .hint {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      opacity: 0.7;
+      letter-spacing: 0.2px;
+      user-select: none;
+    }
+    /* Мяч */
+.juggle-ball {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Анимация мяча */
+.stage.dance .juggle-ball {
+  animation: ballMove 0.6s ease-in-out infinite;
+}
+
+@keyframes ballMove {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(100px); } /* вверх */
+  100% { transform: translateX(0); }
+}
+
+/* Рука подбрасывает мяч */
+.stage.dance .arm-right {
+  animation: throwArm 0.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+
+@keyframes throwArm {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(-20deg); } /* подбрасывает */
+  100% { transform: rotate(0deg); }
+}
+  </style>
+</head>
+
+<body>
+  <div class="stage" id="stage" aria-label="Cute dancing robot">
+    <div class="hint">Hover to dance</div>
+    <div class="robot" role="img" aria-hidden="true">
+      <!-- Simple SVG robot -->
+      <svg viewBox="0 0 280 320">
+        <!-- Antenna -->
+        <g class="antenna">
+          <circle cx="140" cy="40" r="8" fill="var(--accent)" />
+          <rect x="136" y="48" width="8" height="18" rx="4" fill="var(--robot-body)" />
+        </g>
+
+        <!-- Head -->
+        <g class="head">
+          <rect x="95" y="70" width="90" height="70" rx="16" fill="var(--robot-body)" />
+          <rect x="105" y="80" width="70" height="50" rx="12" fill="var(--robot-face)" />
+          <!-- Eyes -->
+          <g class="eye">
+            <circle cx="128" cy="105" r="8" fill="var(--robot-eye)" />
+          </g>
+          <g class="eye">
+            <circle cx="152" cy="105" r="8" fill="var(--robot-eye)" />
+          </g>
+          <!-- Smile -->
+          <path d="M118 118 Q140 130 162 118" stroke="var(--accent)" stroke-width="3" fill="none" stroke-linecap="round" />
+        </g>
+
+        <!-- Torso -->
+        <g class="torso">
+          <rect x="85" y="150" width="110" height="90" rx="18" fill="var(--robot-body)" />
+          <!-- Chest panel -->
+          <rect x="100" y="165" width="80" height="60" rx="12" fill="#cfe7ff" />
+          <circle cx="112" cy="195" r="6" fill="var(--accent)" />
+          <rect x="125" y="185" width="40" height="8" rx="4" fill="#9bdcff" />
+          <rect x="125" y="200" width="40" height="8" rx="4" fill="#9bdcff" />
+        </g>
+
+        <!-- Arms -->
+        <g class="arm-left">
+          <rect x="55" y="160" width="30" height="14" rx="7" fill="var(--robot-body)" />
+          <rect x="40" y="174" width="45" height="12" rx="6" fill="var(--robot-body)" />
+          <circle cx="40" cy="180" r="7" fill="var(--accent)" />
+        </g>
+        <g class="arm-right">
+          <rect x="195" y="160" width="30" height="14" rx="7" fill="var(--robot-body)" />
+          <rect x="195" y="174" width="45" height="12" rx="6" fill="var(--robot-body)" />
+          <circle cx="240" cy="180" r="7" fill="var(--accent)" />
+        </g>
+
+        <!-- Legs -->
+        <g class="leg-left">
+          <rect x="105" y="242" width="26" height="40" rx="8" fill="var(--robot-body)" />
+          <rect x="98" y="282" width="40" height="12" rx="6" fill="#86d8ff" />
+        </g>
+        <g class="leg-right">
+          <rect x="149" y="242" width="26" height="40" rx="8" fill="var(--robot-body)" />
+          <rect x="142" y="282" width="40" height="12" rx="6" fill="#86d8ff" />
+        </g>
+        <!-- Juggling ball -->
+<circle class="juggle-ball" cx="10" cy="150" r="10" fill="yellow" />
+      </svg>
+    </div>
+
+    <div class="floor" aria-hidden="true"></div>
+    <div class="container">
+  <div class="ball"></div>
+</div>
+
+  </div>
+
+  <script>
+    // Toggle dance on hover using JS (for mobile or programmatic triggers too)
+    const stage = document.getElementById('stage');
+    // Mouse hover
+    stage.addEventListener('mouseenter', () => stage.classList.add('dance'));
+    stage.addEventListener('mouseleave', () => stage.classList.remove('dance'));
+    // Touch fallback: tap to toggle
+    let dancing = false;
+    stage.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      dancing = !dancing;
+      stage.classList.toggle('dance', dancing);
+    }, {
+      passive: false
+    });
+  </script>
+</body>
+
+</html>
